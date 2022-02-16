@@ -1,9 +1,8 @@
 package com.mahan.compose.jetoutline.ui.screens.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,13 +10,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mahan.compose.jetoutline.data.models.Server
+import com.mahan.compose.jetoutline.ui.components.ServerItem
 import com.mahan.compose.jetoutline.ui.components.appbar.HomeScreenAppBar
 import com.mahan.compose.jetoutline.ui.components.drawer.NavigationDrawer
 import kotlinx.coroutines.CoroutineScope
@@ -68,7 +68,7 @@ private fun Content(
 ) {
     val accessKey by viewModel.accessKey
     ModalBottomSheetLayout(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.surface),
         sheetState = sheetState,
         sheetBackgroundColor = MaterialTheme.colors.background,
         sheetContent = {
@@ -78,6 +78,20 @@ private fun Content(
         }
     ) {
         // Screen Content Goes Here
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.fillMaxSize().padding(12.dp)
+        ) {
+            item {
+                ServerItem(
+                    server = Server(),
+                    onConnectRequest = {},
+                    onDisconnectRequest = {},
+                    expanded = true
+                )
+            }
+        }
     }
 }
 
