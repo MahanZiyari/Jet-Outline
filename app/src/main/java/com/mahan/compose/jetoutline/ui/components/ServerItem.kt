@@ -29,8 +29,8 @@ fun ServerItem(
     if (expanded) {
         ExpandedServerItem(
             server = server,
-            onConnectRequest = {},
-            onDisconnectRequest = {}
+            onConnectRequest = onConnectRequest,
+            onDisconnectRequest = onDisconnectRequest
         )
     } else {
         CollapsedServerItem(
@@ -54,7 +54,7 @@ private fun CollapsedServerItem(
         )
     )
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         backgroundColor = MaterialTheme.colors.background,
         elevation = 8.dp,
         shape = MaterialTheme.shapes.large,

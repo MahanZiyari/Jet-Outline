@@ -3,8 +3,10 @@ package com.mahan.compose.jetoutline.ui.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -67,8 +69,11 @@ private fun Content(
     viewModel: HomeScreenViewModel
 ) {
     val accessKey by viewModel.accessKey
+    val servers by viewModel.servers.collectAsState()
     ModalBottomSheetLayout(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.surface),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.surface),
         sheetState = sheetState,
         sheetBackgroundColor = MaterialTheme.colors.background,
         sheetContent = {
@@ -81,15 +86,29 @@ private fun Content(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
-            modifier = Modifier.fillMaxSize().padding(12.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
         ) {
-            item {
-                ServerItem(
-                    server = Server(),
-                    onConnectRequest = {},
-                    onDisconnectRequest = {},
-                    expanded = true
-                )
+            if (servers.isEmpty()) return@LazyColumn
+            if (servers.size == 1) {
+                item {
+                    ServerItem(
+                        server = servers.first(),
+                        onConnectRequest = {},
+                        onDisconnectRequest = {},
+                        expanded = true
+                    )
+                }
+            } else {
+                items(servers) {
+                    ServerItem(
+                        server = it,
+                        onConnectRequest = {},
+                        onDisconnectRequest = {},
+                        expanded = false
+                    )
+                }
             }
         }
     }

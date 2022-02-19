@@ -16,9 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mahan.compose.jetoutline.navigation.AppNavigation
 import com.mahan.compose.jetoutline.ui.screens.home.HomeScreenViewModel
 import com.mahan.compose.jetoutline.ui.theme.JetOutlineTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val homeScreenViewModel: HomeScreenViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
