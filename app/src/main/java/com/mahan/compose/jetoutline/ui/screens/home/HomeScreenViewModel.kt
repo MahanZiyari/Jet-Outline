@@ -1,5 +1,6 @@
 package com.mahan.compose.jetoutline.ui.screens.home
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,9 @@ class HomeScreenViewModel @Inject constructor(private val repository: ServerRepo
     private val _servers = MutableStateFlow<List<Server>>(emptyList())
     val servers = _servers.asStateFlow()
 
+    // Active Server
+    val activeServer: MutableState<Server?> = mutableStateOf(null)
+
     init {
         getServers()
     }
@@ -38,5 +42,30 @@ class HomeScreenViewModel @Inject constructor(private val repository: ServerRepo
         }
     }
 
+    fun connect(server: Server) {
+        disconnectAllServers()
+        viewModelScope.launch {
+            repository.update(server)
+        }
+    }
 
+    fun disconnect() {
+        disconnectAllServers()
+    }
+
+    private fun disconnectAllServers() {
+        _servers.value.filter { it.connected }.forEach {
+            // Creating a server object for each connected server
+            val tempServer = Server(
+                id = it.id,
+                name = it.name,
+                ip = it.ip,
+                port = it.port,
+                connected = false
+            )
+            viewModelScope.launch {
+                repository.update(tempServer)
+            }
+        }
+    }
 }

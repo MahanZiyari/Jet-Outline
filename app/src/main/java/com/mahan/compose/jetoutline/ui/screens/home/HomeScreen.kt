@@ -95,17 +95,41 @@ private fun Content(
                 item {
                     ServerItem(
                         server = servers.first(),
-                        onConnectRequest = {},
-                        onDisconnectRequest = {},
+                        onConnectRequest = {
+                            viewModel.connect(
+                                Server(
+                                    id = it.id,
+                                    name = it.name,
+                                    ip = it.ip,
+                                    port = it.port,
+                                    connected = true
+                                )
+                            )
+                        },
+                        onDisconnectRequest = {
+                            viewModel.disconnect()
+                        },
                         expanded = true
                     )
                 }
             } else {
-                items(servers) {
+                items(servers) { server ->
                     ServerItem(
-                        server = it,
-                        onConnectRequest = {},
-                        onDisconnectRequest = {},
+                        server = server,
+                        onConnectRequest = {
+                            viewModel.connect(
+                                Server(
+                                    id = it.id,
+                                    name = it.name,
+                                    ip = it.ip,
+                                    port = it.port,
+                                    connected = true
+                                )
+                            )
+                        },
+                        onDisconnectRequest = {
+                            viewModel.disconnect()
+                        },
                         expanded = false
                     )
                 }
