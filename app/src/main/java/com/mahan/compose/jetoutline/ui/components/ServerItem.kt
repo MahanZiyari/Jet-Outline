@@ -24,6 +24,8 @@ fun ServerItem(
     expanded: Boolean = false,
     onConnectRequest: (Server) -> Unit,
     onDisconnectRequest: (Server) -> Unit,
+    renameText: String,
+    onRenameTextChange: (String) -> Unit,
     onRename: () -> Unit,
     onForget: (Server) -> Unit
 ) {
@@ -33,7 +35,9 @@ fun ServerItem(
             onConnectRequest = onConnectRequest,
             onDisconnectRequest = onDisconnectRequest,
             onRename = onRename,
-            onForget = onForget
+            onForget = onForget,
+            renameText = renameText,
+            onRenameTextChange = onRenameTextChange
         )
     } else {
         CollapsedServerItem(
@@ -41,7 +45,9 @@ fun ServerItem(
             onConnectRequest = onConnectRequest,
             onDisconnectRequest = onDisconnectRequest,
             onRename = onRename,
-            onForget = onForget
+            onForget = onForget,
+            renameText = renameText,
+            onRenameTextChange = onRenameTextChange
         )
     }
 }
@@ -52,7 +58,9 @@ private fun CollapsedServerItem(
     onConnectRequest: (Server) -> Unit,
     onDisconnectRequest: (Server) -> Unit,
     onRename: () -> Unit,
-    onForget: (Server) -> Unit
+    onForget: (Server) -> Unit,
+    renameText: String,
+    onRenameTextChange: (String) -> Unit
 ) {
     val circleColor by animateColorAsState(
         targetValue = if (server.connected) MaterialTheme.colors.secondary else MaterialTheme.colors.primary,
@@ -153,17 +161,6 @@ private fun CollapsedServerItem(
     }
 }
 
-@Preview
-@Composable
-private fun CollapsedServerItemPreview() {
-    CollapsedServerItem(
-        server = Server(),
-        onDisconnectRequest = {},
-        onConnectRequest = {},
-        onForget = {},
-        onRename = {}
-    )
-}
 
 @Composable
 private fun ExpandedServerItem(
@@ -171,7 +168,9 @@ private fun ExpandedServerItem(
     onConnectRequest: (Server) -> Unit,
     onDisconnectRequest: (Server) -> Unit,
     onRename: () -> Unit,
-    onForget: (Server) -> Unit
+    onForget: (Server) -> Unit,
+    renameText: String,
+    onRenameTextChange: (String) -> Unit
 ) {
     val circleColor by animateColorAsState(
         targetValue = if (server.connected) MaterialTheme.colors.secondary else MaterialTheme.colors.primary,
@@ -183,6 +182,23 @@ private fun ExpandedServerItem(
     var expanded by remember {
         mutableStateOf(false)
     }
+
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
+
+    RenameDialog(
+        expanded = openDialog,
+        title = "Rename",
+        text = renameText,
+        onTextChange = {
+            onRenameTextChange(it)
+        },
+        onDismissRequest = { openDialog = false },
+        onConfirm = {
+            onRename()
+        }
+    )
 
     Card(
         modifier = Modifier
@@ -231,7 +247,7 @@ private fun ExpandedServerItem(
 
                     OptionsMenu(
                         expanded = expanded,
-                        onRenameClicked = { /*TODO*/ },
+                        onRenameClicked = { openDialog = true },
                         onForgetClicked = { onForget(server) },
                         onDismissRequest = { expanded = false }
                     )
@@ -287,11 +303,23 @@ private fun ExpandedServerItem(
 @Preview
 @Composable
 private fun ExpandedServerItemPreview() {
-    ExpandedServerItem(
+    /*ExpandedServerItem(
         server = Server(),
-        onDisconnectRequest = {},
         onConnectRequest = {},
+        onDisconnectRequest = {},
+        onRename = {},
         onForget = {},
-        onRename = {}
-    )
+    )*/
+}
+
+@Preview
+@Composable
+private fun CollapsedServerItemPreview() {
+    /*CollapsedServerItem(
+        server = Server(),
+        onConnectRequest = {},
+        onDisconnectRequest = {},
+        onRename = {},
+        onForget = {},
+    )*/
 }

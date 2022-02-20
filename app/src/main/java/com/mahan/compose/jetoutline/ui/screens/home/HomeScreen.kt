@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -70,6 +67,7 @@ private fun Content(
 ) {
     val accessKey by viewModel.accessKey
     val servers by viewModel.servers.collectAsState()
+    var renameText by viewModel.newName
     ModalBottomSheetLayout(
         modifier = Modifier
             .fillMaxSize()
@@ -113,7 +111,13 @@ private fun Content(
                         onForget = {
                             viewModel.removeServer(it)
                         },
-                        onRename = {}
+                        onRename = {
+                            viewModel.renameServer(servers.first())
+                        },
+                        renameText = renameText,
+                        onRenameTextChange = {
+                            renameText = it
+                        }
                     )
                 }
             } else {
@@ -138,7 +142,13 @@ private fun Content(
                         onForget = {
                             viewModel.removeServer(it)
                         },
-                        onRename = {}
+                        onRename = {
+                            viewModel.renameServer(server)
+                        },
+                        renameText = renameText,
+                        onRenameTextChange = {
+                            renameText = it
+                        }
                     )
                 }
             }

@@ -30,6 +30,9 @@ class HomeScreenViewModel @Inject constructor(private val repository: ServerRepo
     // Active Server
     val activeServer: MutableState<Server?> = mutableStateOf(null)
 
+    // AlertDialogText
+    val newName = mutableStateOf("")
+
     init {
         getServers()
     }
@@ -55,6 +58,21 @@ class HomeScreenViewModel @Inject constructor(private val repository: ServerRepo
 
     fun removeServer(server: Server) {
         viewModelScope.launch { repository.delete(server) }
+    }
+
+    fun renameServer(server: Server) {
+        viewModelScope.launch {
+            repository.update(
+                Server(
+                    id = server.id,
+                    name = newName.value,
+                    ip = server.ip,
+                    port = server.port,
+                    connected = server.connected
+                )
+            )
+        }
+        newName.value = ""
     }
 
     private fun disconnectAllServers() {
