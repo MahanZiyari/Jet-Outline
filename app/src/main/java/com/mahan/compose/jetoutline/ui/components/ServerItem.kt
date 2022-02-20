@@ -6,8 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -24,19 +23,25 @@ fun ServerItem(
     server: Server,
     expanded: Boolean = false,
     onConnectRequest: (Server) -> Unit,
-    onDisconnectRequest: (Server) -> Unit
+    onDisconnectRequest: (Server) -> Unit,
+    onRename: () -> Unit,
+    onForget: (Server) -> Unit
 ) {
     if (expanded) {
         ExpandedServerItem(
             server = server,
             onConnectRequest = onConnectRequest,
-            onDisconnectRequest = onDisconnectRequest
+            onDisconnectRequest = onDisconnectRequest,
+            onRename = onRename,
+            onForget = onForget
         )
     } else {
         CollapsedServerItem(
             server = server,
             onConnectRequest = onConnectRequest,
-            onDisconnectRequest = onDisconnectRequest
+            onDisconnectRequest = onDisconnectRequest,
+            onRename = onRename,
+            onForget = onForget
         )
     }
 }
@@ -45,7 +50,9 @@ fun ServerItem(
 private fun CollapsedServerItem(
     server: Server,
     onConnectRequest: (Server) -> Unit,
-    onDisconnectRequest: (Server) -> Unit
+    onDisconnectRequest: (Server) -> Unit,
+    onRename: () -> Unit,
+    onForget: (Server) -> Unit
 ) {
     val circleColor by animateColorAsState(
         targetValue = if (server.connected) MaterialTheme.colors.secondary else MaterialTheme.colors.primary,
@@ -53,8 +60,14 @@ private fun CollapsedServerItem(
             durationMillis = 1000
         )
     )
+
+    var expanded by remember {
+        mutableStateOf(false)
+    }
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         backgroundColor = MaterialTheme.colors.background,
         elevation = 8.dp,
         shape = MaterialTheme.shapes.large,
@@ -98,7 +111,7 @@ private fun CollapsedServerItem(
                 }
 
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { expanded = true },
                     modifier = Modifier.weight(10f)
                 ) {
                     Icon(
@@ -106,8 +119,17 @@ private fun CollapsedServerItem(
                         contentDescription = "More",
                         modifier = Modifier.size(30.dp)
                     )
+
+                    OptionsMenu(
+                        expanded = expanded,
+                        onRenameClicked = { /*TODO*/ },
+                        onForgetClicked = { onForget(server) },
+                        onDismissRequest = { expanded = false }
+                    )
                 }
             }
+
+
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                 TextButton(
@@ -137,7 +159,9 @@ private fun CollapsedServerItemPreview() {
     CollapsedServerItem(
         server = Server(),
         onDisconnectRequest = {},
-        onConnectRequest = {}
+        onConnectRequest = {},
+        onForget = {},
+        onRename = {}
     )
 }
 
@@ -145,7 +169,9 @@ private fun CollapsedServerItemPreview() {
 private fun ExpandedServerItem(
     server: Server,
     onConnectRequest: (Server) -> Unit,
-    onDisconnectRequest: (Server) -> Unit
+    onDisconnectRequest: (Server) -> Unit,
+    onRename: () -> Unit,
+    onForget: (Server) -> Unit
 ) {
     val circleColor by animateColorAsState(
         targetValue = if (server.connected) MaterialTheme.colors.secondary else MaterialTheme.colors.primary,
@@ -153,6 +179,10 @@ private fun ExpandedServerItem(
             durationMillis = 1000
         )
     )
+
+    var expanded by remember {
+        mutableStateOf(false)
+    }
 
     Card(
         modifier = Modifier
@@ -190,13 +220,20 @@ private fun ExpandedServerItem(
                 }
 
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { expanded = true },
                     modifier = Modifier.weight(10f)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_kebab),
                         contentDescription = "More",
                         modifier = Modifier.size(30.dp)
+                    )
+
+                    OptionsMenu(
+                        expanded = expanded,
+                        onRenameClicked = { /*TODO*/ },
+                        onForgetClicked = { onForget(server) },
+                        onDismissRequest = { expanded = false }
                     )
                 }
             }
@@ -253,6 +290,8 @@ private fun ExpandedServerItemPreview() {
     ExpandedServerItem(
         server = Server(),
         onDisconnectRequest = {},
-        onConnectRequest = {}
+        onConnectRequest = {},
+        onForget = {},
+        onRename = {}
     )
 }

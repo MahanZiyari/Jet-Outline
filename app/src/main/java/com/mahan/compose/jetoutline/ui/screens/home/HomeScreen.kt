@@ -109,7 +109,11 @@ private fun Content(
                         onDisconnectRequest = {
                             viewModel.disconnect()
                         },
-                        expanded = true
+                        expanded = true,
+                        onForget = {
+                            viewModel.removeServer(it)
+                        },
+                        onRename = {}
                     )
                 }
             } else {
@@ -130,7 +134,11 @@ private fun Content(
                         onDisconnectRequest = {
                             viewModel.disconnect()
                         },
-                        expanded = false
+                        expanded = false,
+                        onForget = {
+                            viewModel.removeServer(it)
+                        },
+                        onRename = {}
                     )
                 }
             }

@@ -1,7 +1,6 @@
 package com.mahan.compose.jetoutline.ui.screens.home
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +14,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(private val repository: ServerRepository): ViewModel() {
+class HomeScreenViewModel @Inject constructor(private val repository: ServerRepository) :
+    ViewModel() {
 
     // States of BottomSheet TextField
     val accessKey = mutableStateOf("")
@@ -51,6 +51,10 @@ class HomeScreenViewModel @Inject constructor(private val repository: ServerRepo
 
     fun disconnect() {
         disconnectAllServers()
+    }
+
+    fun removeServer(server: Server) {
+        viewModelScope.launch { repository.delete(server) }
     }
 
     private fun disconnectAllServers() {
